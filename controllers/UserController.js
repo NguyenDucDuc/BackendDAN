@@ -103,6 +103,7 @@ const userController = {
                 fullname: req.body.fullname,
                 email: req.body.email,
                 role: "USER",
+                active: 1,
                 avatar: req.body.avatar
             })
             res.status(200).json(newUser)
@@ -155,7 +156,8 @@ const userController = {
     loginAdmin: async (req, res) => {
         try {
             const user = await User.findOne({ where: { username: req.body.username } })
-            const validPassword = await bcrypt.compare(user.password, req.body.password)
+            const validPassword = await bcrypt.compare(req.body.password, user.password)
+            console.log(validPassword)
             if (user && validPassword) {
                 if (user.role === "ADMIN") {
                     const accessToken = jwt.sign({
@@ -166,10 +168,12 @@ const userController = {
                 } else {
                     return res.status(500).json("User is not admin")
                 }
+            }else {
+                return res.status(500).json("User does not exist")
             }
-            return res.status(500).json("Error")
+            
         } catch (error) {
-            console.log(error)
+            res.status(400).json("User does not exist")
         }
     },
     countAllUser: async (req, res) => {
