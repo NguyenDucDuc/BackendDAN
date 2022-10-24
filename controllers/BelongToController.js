@@ -1,4 +1,4 @@
-const {BelongTo, User, Group} = require("../models")
+const {BelongTo, User, Group, sequelize} = require("../models")
 
 
 const belongToController = {
@@ -34,7 +34,13 @@ const belongToController = {
     },
     getGroupByUser: async (req,res) => {
         try {
-            const belongTos = await BelongTo.findAll({where: {user_id: req.data.id}})
+            // const belongTos = await BelongTo.findAll({where: {user_id: req.data.id}})
+            let query = `select * from belongtos where user_id=${req.data.id}`
+            if(req.query.page){
+                const page = req.query.page
+                query += ` limit ${5} offset ${(page-1)*5}`
+            }
+            const [belongTos] = await sequelize.query(query)
             for(let i=0; i< belongTos.length; i++) {
                 const group = await Group.findByPk(belongTos[i].group_id)
                 belongTos[i].group_id = group

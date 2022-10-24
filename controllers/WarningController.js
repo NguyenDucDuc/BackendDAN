@@ -30,6 +30,15 @@ const warningController = {
         } catch (error) {
             console.log(error)
         }
+    },
+    deleteByContent: async(req, res) => {
+        try {
+            const [[warning]] = await sequelize.query(`select * from warnings where content = 'Thu nhập của bạn đang ít hơn chi tiêu' and user_id=${req.data.id}`)
+            await sequelize.query(`delete from warnings where content = 'Thu nhập của bạn đang ít hơn chi tiêu' and user_id=${req.data.id} `)
+            res.status(200).json(warning)
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

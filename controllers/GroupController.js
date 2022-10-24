@@ -21,7 +21,12 @@ const groupController = {
     
     getGroupByUser: async(req,res) => {
         try {
-            const groups = await Group.findAll({where: {user_id: req.data.id}})
+            let query = `select * from quanlychitieudb.groups where user_id=${req.data.id}`
+            if(req.query.page){
+                const page = parseInt(req.query.page)
+                query += ` limit ${5} offset ${(page-1)*5}`
+            }
+            const [groups] = await sequelize.query(query)
             res.status(200).json(groups)
         } catch (error) {
             res.status(500).json(error)
@@ -85,6 +90,14 @@ const groupController = {
         } catch (error) {
             console.log(error)
             res.status(500).json("GroupId and UserId is already exist")
+        }
+    },
+    countAllGroupByUser: async (req,res) => {
+        try {
+            const [[count]] = await sequelize.query(`select count(*) as 'count' from quanlychitieudb.groups where user_id=${req.data.id}`)
+            res.status(200).json(count)
+        } catch (error) {
+            console.log(error)
         }
     }
     
