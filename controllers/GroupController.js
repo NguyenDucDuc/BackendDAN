@@ -99,6 +99,14 @@ const groupController = {
         } catch (error) {
             console.log(error)
         }
+    },
+    getById: async(req,res) => {
+        try {
+            const group = await Group.findByPk(req.params.groupId)
+            res.status(200).json(group)
+        } catch (error) {
+            console.log(error)
+        }
     }
     
     

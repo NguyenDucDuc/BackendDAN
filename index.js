@@ -123,6 +123,9 @@ io.on("connection", (socket) => {
     socket.on("clientSendCreateGroup", data => {
         socket.broadcast.emit("serverReSendCreateGroup", data)
     })
+    socket.on('clientSendCreateBelongTo', data => {
+        socket.broadcast.emit('serverReSendCreateBelongTo', data)
+    })
 })
 
 

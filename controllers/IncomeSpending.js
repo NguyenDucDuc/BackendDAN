@@ -172,7 +172,7 @@ const incomeSpendingController = {
     },
     countSpending: async (req, res) => {
         try {
-            const [countSpendingDay] = await sequelize.query(`select count(*) as 'countSpendingDay' from incomespendings where user_id=${req.data.id} and Date(createdAt) = Date(Now()) `)
+            const [[countSpendingDay]] = await sequelize.query(`select count(*) as 'countSpendingDay' from incomespendings where user_id=${req.data.id} and Date(createdAt) = Date(Now()) `)
             res.status(200).json(countSpendingDay)
         } catch (error) {
             console.log(error)

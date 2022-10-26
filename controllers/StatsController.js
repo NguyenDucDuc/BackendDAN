@@ -54,6 +54,19 @@ const statsController = {
         } catch (error) {
             console.log(error)
         }
+    },
+    countUserAndGroup: async (req,res) => {
+        try {
+            const [[countUser]] = await sequelize.query(`select count(*) as 'countUser' from users`)
+            const [[countGroup]] = await sequelize.query(`select count(*) as 'countGroup' from quanlychitieudb.groups`)
+            const newObj = {
+                countUser: countUser.countUser,
+                countGroup: countGroup.countGroup
+            }
+            res.status(200).json(newObj)
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 
