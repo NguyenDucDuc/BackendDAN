@@ -18,5 +18,6 @@ groupRoute.post("/group/add-member/:groupId", middleWare.verifyToken, middleWare
     
 ],groupController.addMember)
 groupRoute.get("/group-count", middleWare.verifyToken, groupController.countAllGroupByUser)
+groupRoute.delete('/test-delete/:groupId', groupController.test)
 
 module.exports = {groupRoute}

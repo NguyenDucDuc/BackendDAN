@@ -62,8 +62,25 @@ app.use('/api/v1', userGoogleRoute)
 
 
 //SOCKET
+let userConnect = []
 io.on("connection", (socket) => {
     console.log(socket.id)
+    socket.on('disconnect', () => {
+        userConnect = userConnect.filter(u => u.socketId !== socket.id)
+    })
+    socket.on('login', userId => {
+        // kiem tra xem user cos trong mang chua, neu chua thi them vao
+        userConnect.push({
+            userId: userId,
+            socketId: socket.id,
+        })
+        console.log(userConnect)
+
+    })
+    socket.on("joinRoom", roomId => {
+        socket.join(roomId)
+        socket.roomId = roomId
+    })
     socket.on("test", (data) => {
         console.log(data)
     })
@@ -74,11 +91,6 @@ io.on("connection", (socket) => {
     socket.on("clientSendSpending", (spending) => {
         console.log(spending)
         socket.broadcast.emit("serverReSendSpending", spending)
-    })
-
-    socket.on("joinRoom", roomId => {
-        socket.join(roomId)
-        socket.roomId = roomId
     })
 
     socket.on("clientSendMessage", data => {
@@ -104,27 +116,51 @@ io.on("connection", (socket) => {
 
     socket.on("clientSendIncomeSpending", data => {
         console.log(data)
-        socket.broadcast.emit("serverReSendIncomeSpending", data)
+        // socket.broadcast.emit("serverReSendIncomeSpending", data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendIncomeSpending', data.incomeSpending)
+        }
     })
 
     socket.on("clientSendWarning", data => {
-        socket.broadcast.emit("serverReSendWarning", data)
+        // socket.broadcast.emit("serverReSendWarning", data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendWarning', data.warning)
+        }
     })
 
     socket.on("clientSendSpendingJar", data => {
         socket.broadcast.emit("serverReSendSpendingJar", data)
     })
     socket.on("clientSendIncomeSpendingAfterDelete", data => {
-        socket.broadcast.emit("serverReSendIncomeSpendingAfterDelete", data)
+        // socket.broadcast.emit("serverReSendIncomeSpendingAfterDelete", data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendIncomeSpendingAfterDelete', data.incomeSpending)
+        }
     })
     socket.on("clientSendGroupAfterDeleted", data => {
-        socket.broadcast.emit("serverReSendGroupAfterDeleted", data)
+        // socket.broadcast.emit("serverReSendGroupAfterDeleted", data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendGroupAfterDeleted', data.groups)
+        }
     })
     socket.on("clientSendCreateGroup", data => {
-        socket.broadcast.emit("serverReSendCreateGroup", data)
+        // socket.broadcast.emit("serverReSendCreateGroup", data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendCreateGroup', data.group)
+        }
     })
     socket.on('clientSendCreateBelongTo', data => {
-        socket.broadcast.emit('serverReSendCreateBelongTo', data)
+        // socket.broadcast.emit('serverReSendCreateBelongTo', data)
+        const receiver = userConnect.filter(u => u.userId === data.userId)
+        for(i=0; i<receiver.length; i++){
+            io.to(receiver[i].socketId).emit('serverReSendCreateBelongTo', data.belongTo)
+        }
     })
 })
 

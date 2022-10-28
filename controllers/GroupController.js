@@ -1,5 +1,6 @@
 const {Group, User, BelongTo, sequelize} = require("../models")
 const {validationResult} = require("express-validator")
+const { MessageGroup } = require("../modelMongoDB/MessageGroup")
 
 const groupController = {
     add: async (req,res) => {
@@ -69,6 +70,8 @@ const groupController = {
             const group = await Group.findByPk(req.params.id)
             await group.destroy()
             const groups = await Group.findAll({where: {user_id: req.data.id}})
+            const grId = parseInt(req.params.id)
+            await MessageGroup.deleteMany({groupId: grId})
             res.status(200).json(groups)
         } catch (error) {
             res.status(500).json(error)
@@ -106,6 +109,17 @@ const groupController = {
             res.status(200).json(group)
         } catch (error) {
             console.log(error)
+        }
+    },
+    test: async (req,res) => {
+        try {
+            const grId = parseInt(req.params.groupId)
+            console.log(grId)
+            await MessageGroup.deleteMany({groupId: grId})
+            res.status(200).json('Deleted')
+        } catch (error) {
+            console.log(error)
+            res.status(500).json("ERROR")
         }
     }
     
