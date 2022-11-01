@@ -95,8 +95,8 @@ io.on("connection", (socket) => {
 
     socket.on("clientSendMessage", data => {
         // io.sockets.emit("serverReSendMessage", data)
-        console.log(data.userId)
-        io.sockets.emit("serverReSendMessage", data)
+        // io.sockets.emit("serverReSendMessage", data)
+        io.to(socket.roomId).emit('serverReSendMessage', data)
     })
     socket.on("clientSendGroup", data => {
         socket.broadcast.emit("serverReSendGroup", data)
@@ -108,10 +108,12 @@ io.on("connection", (socket) => {
 
     socket.on("infoClientTyping", info => {
         socket.broadcast.emit("serverReSendInfoClientTyping", info)
+        
     })
 
     socket.on("clientSendTypingOff", userNull => {
         socket.broadcast.emit("serverReSendTypingOff", userNull)
+        
     })
 
     socket.on("clientSendIncomeSpending", data => {
