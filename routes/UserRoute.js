@@ -20,6 +20,7 @@ userRoute.post("/user/login-admin", userController.loginAdmin)
 userRoute.get("/user/count", userController.countAllUser)
 userRoute.post("/user/forget-password", userController.forgetPassWord)
 userRoute.post("/user/reset-password", userController.resetPassword)
+userRoute.post("/user/facebook", userController.facebookGetOrCreate)
 
 
 module.exports = {userRoute}

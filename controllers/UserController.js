@@ -216,6 +216,34 @@ const userController = {
         } catch (error) {
             console.log(error)
         }
+    },
+    facebookGetOrCreate: async (req,res) => {
+        try {
+            const user = await User.findOne({where: {
+                username: req.body.username,
+            }})
+            if(user){
+                const accessToken = await jwt.sign({
+                    id: user.id,
+                }, process.env.SECRET_KEY)
+                return res.status(200).json({accessToken: accessToken, user:user})
+            }else {
+                const newUser = await User.create({
+                    username: req.body.username,
+                    fullname: req.body.fullname,
+                    role: 'USER', 
+                    active: 1,
+                    email: req.body.email,
+                    avatar: req.body.avatar
+                })
+                const accessToken = await jwt.sign({
+                    id: user.id,
+                }, process.env.SECRET_KEY)
+                return res.status(200).json({accessToken: accessToken, user: newUser})
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 
