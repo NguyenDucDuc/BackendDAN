@@ -19,9 +19,13 @@ const belongToController = {
     },
     deleteUserFromGroup: async (req,res) => {
         try {
+            // lay ra moi quan he giua thanh vien do va nhom
             const belongTo = await BelongTo.findByPk(req.params.belongToId)
+            // lay groupId
             const groupId = belongTo.group_id
+            // xoa thanh vien khoi nhom
             await belongTo.destroy()
+            // load lai cac thanh vien trong nhom voi groupId vua giu lai
             const belongTos = await BelongTo.findAll({where: {group_id: groupId}})
             for(let i=0; i< belongTos.length; i++) {
                 const user = await User.findByPk(belongTos[i].user_id)

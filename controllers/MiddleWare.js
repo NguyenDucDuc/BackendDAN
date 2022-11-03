@@ -121,7 +121,7 @@ const middleWare = {
             const user = await User.findByPk(req.data.id)
             const belongTo = await BelongTo.findByPk(req.params.belongToId)
             const group = await Group.findByPk(belongTo.group_id)
-            if (user && group.user_id === user.id) {
+            if (user && group.user_id === user.id && (user.id !== belongTo.user_id)) {
                 next()
             } else {
                 res.status(403).json("Access deniend")
